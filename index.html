@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SulAmérica & Blip - Cockpit Executivo</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --azul-sula: #004F9F;
+            --azul-sula-light: #e6f0fa;
+            --laranja-sula: #F47920;
+            --azul-blip: #0091FF;
+            --dark-blip: #1A2433;
+            --bg-whatsapp: #efeae2;
+            --balao-bot: #ffffff;
+            --balao-user: #d9fdd3;
+            --txt-main: #111b21;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Lexend', sans-serif; }
+
+        body {
+            background: linear-gradient(135deg, var(--dark-blip) 0%, #0d1520 100%);
+            color: #ffffff; min-height: 100vh; display: flex; flex-direction: column; align-items: center; overflow-x: hidden;
+        }
+
+        /* Faixa de Segurança */
+        .security-strip {
+            width: 100%; background: #0f172a; color: #10b981; text-align: center; padding: 8px;
+            font-size: 0.75rem; font-weight: 600; letter-spacing: 0.5px;
+            border-bottom: 1px solid rgba(255,255,255,0.05); display: flex; align-items: center; justify-content: center; gap: 8px;
+        }
+
+        /* Novo Cabeçalho Corporativo (Apenas as duas logos) */
+        header {
+            display: flex; justify-content: space-between; align-items: center;
+            width: 100%; max-width: 1300px; padding: 15px 35px; margin: 20px 0;
+            background: #ffffff; border-radius: 16px; box-shadow: 0 8px 30px rgba(0,0,0,0.2);
+        }
+
+        /* Layout Principal */
+        main { display: flex; width: 100%; max-width: 1300px; gap: 30px; justify-content: space-between; align-items: stretch; margin-bottom: 30px; }
+
+        /* Coluna Esquerda: Controles e KPIs */
+        .left-column { flex: 1; display: flex; flex-direction: column; gap: 20px; }
+
+        .control-panel {
+            background: rgba(255, 255, 255, 0.03); padding: 20px; border-radius: 16px; border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .control-panel h2 { font-size: 1.2rem; margin-bottom: 5px; color: var(--azul-blip); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;}
+        .control-panel p { font-size: 0.85rem; color: #94a3b8; margin-bottom: 15px; line-height: 1.4; }
+
+        .journey-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
+        /* Botão expansivo caso seja ímpar no final */
+        .journey-btn:last-child:nth-child(odd) { grid-column: 1 / -1; }
+
+        .journey-btn {
+            width: 100%; padding: 12px; background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 12px;
+            color: #fff; text-align: left; cursor: pointer; transition: all 0.2s ease;
+            display: flex; flex-direction: column; justify-content: center; height: 100%;
+        }
+
+        .journey-btn:hover { background: rgba(255, 255, 255, 0.1); }
+        .journey-btn.active { border-color: var(--laranja-sula); background: rgba(244, 121, 32, 0.12); box-shadow: 0 4px 15px rgba(244, 121, 32, 0.15); }
+        .journey-btn h3 { font-size: 0.85rem; margin-bottom: 4px; font-weight: 600; color: #f8fafc; }
+        .journey-btn span { font-size: 0.7rem; color: #94a3b8; line-height: 1.3; }
+
+        /* Painel de KPI Dinâmico Aprimorado */
+        .kpi-panel {
+            background: linear-gradient(145deg, rgba(0, 79, 159, 0.1) 0%, rgba(244, 121, 32, 0.05) 100%);
+            padding: 24px; border-radius: 16px; border: 1px solid rgba(244, 121, 32, 0.2);
+            flex: 1; display: flex; flex-direction: column; justify-content: flex-start;
+            transition: all 0.3s ease;
+        }
+
+        .kpi-header { font-size: 1.2rem; color: var(--laranja-sula); font-weight: 700; margin-bottom: 20px; text-transform: uppercase; letter-spacing: 0.5px;}
+        .kpi-content { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        
+        .kpi-box {
+            background: rgba(0, 0, 0, 0.25);
+            padding: 20px; border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .kpi-box h4 { 
+            font-size: 0.85rem; color: #94a3b8; margin-bottom: 16px; 
+            text-transform: uppercase; letter-spacing: 0.5px; 
+            border-bottom: 1px solid rgba(255,255,255,0.08); padding-bottom: 8px;
+        }
+
+        .kpi-list { list-style: none; display: flex; flex-direction: column; gap: 16px; }
+        .kpi-item-wrapper { display: flex; align-items: flex-start; gap: 8px; }
+        .kpi-bullet { color: var(--laranja-sula); font-weight: bold; font-size: 1.2rem; line-height: 0.9; }
+        
+        .kpi-text-content { display: flex; flex-direction: column; gap: 8px; width: 100%; justify-content: center;}
+        .kpi-text-content p { font-size: 0.85rem; color: #f8fafc; line-height: 1.4; margin: 0; }
+        .kpi-text-content strong { color: var(--laranja-sula); font-weight: 600; }
+
+        .kpi-highlight { 
+            display: inline-flex; align-items: center; justify-content: center;
+            background: rgba(0, 145, 255, 0.15); color: #60a5fa; 
+            padding: 10px 16px; border-radius: 8px; 
+            font-size: 1.15rem; font-weight: 700; 
+            border: 1px solid rgba(0, 145, 255, 0.3);
+            width: 100%; letter-spacing: -0.5px; text-align: center;
+        }
+
+        /* Coluna Direita: Simulador Smartphone */
+        .phone-container {
+            width: 360px; height: 720px; background: #000000; border-radius: 44px;
+            padding: 10px; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.7); border: 4px solid #334155; position: relative; flex-shrink: 0;
+        }
+
+        .phone-screen {
+            width: 100%; height: 100%; background: var(--bg-whatsapp); border-radius: 32px; overflow: hidden; display: flex; flex-direction: column; position: relative;
+        }
+
+        .wa-header { background: var(--azul-sula); padding: 35px 15px 12px 15px; display: flex; align-items: center; gap: 10px; color: white; z-index: 2; }
+        .wa-avatar { width: 36px; height: 36px; background: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; color: var(--laranja-sula); font-size: 1.1rem; }
+        .wa-info h4 { font-size: 0.95rem; font-weight: 500; display: flex; align-items: center; gap: 6px; }
+        .wa-info p { font-size: 0.7rem; color: var(--azul-sula-light); }
+        .wa-badge { background: #25D366; width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
+
+        .wa-chat-body {
+            flex: 1; padding: 15px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; scroll-behavior: smooth;
+            background-image: url('https://user-images.githubusercontent.com/15075759/28719144-86dc0f70-73b1-11e7-911d-60d70fcded21.png'); background-size: cover;
+        }
+
+        .msg {
+            max-width: 85%; padding: 8px 12px; font-size: 0.85rem; position: relative; line-height: 1.4; color: var(--txt-main);
+            box-shadow: 0 1px 1px rgba(0,0,0,0.1); word-wrap: break-word; overflow-wrap: break-word; word-break: break-word;
+        }
+        .msg a, .msg i, .msg u { word-break: break-all; }
+        .msg-bot { background: var(--balao-bot); align-self: flex-start; border-radius: 0px 12px 12px 12px; }
+        .msg-user { background: var(--balao-user); align-self: flex-end; border-radius: 12px 0px 12px 12px; }
+        .msg-time { font-size: 0.65rem; color: #8696a0; text-align: right; margin-top: 4px; display: block; }
+        .msg code { display: block; background: rgba(0,0,0,0.04); padding: 8px; border-radius: 6px; margin-top: 8px; font-size: 0.75rem; font-family: monospace; word-break: break-all; color: var(--azul-sula); }
+
+        .meta-list-container { margin-top: 8px; border-top: 1px solid #e9ecef; padding-top: 8px; display: flex; flex-direction: column; gap: 4px; }
+        .meta-list-header { font-size: 0.75rem; font-weight: 600; color: #667781; padding: 4px 0; text-transform: uppercase; }
+        .meta-menu-option { background: #f8f9fa; border: 1px solid #e9ecef; padding: 10px; border-radius: 8px; font-size: 0.85rem; color: var(--azul-sula); font-weight: 500; cursor: pointer; display: flex; justify-content: space-between; align-items: center; }
+        .meta-menu-option:hover { background: var(--azul-sula-light); }
+        .meta-menu-option::after { content: "➔"; font-size: 0.75rem; opacity: 0.7; }
+        .meta-buttons-inline { display: flex; flex-direction: column; gap: 6px; margin-top: 8px; border-top: 1px solid #e9ecef; padding-top: 8px; }
+        .meta-btn-quick { width: 100%; background: #ffffff; color: var(--azul-sula); border: 1px solid #e9ecef; padding: 10px; border-radius: 8px; font-weight: 500; font-size: 0.85rem; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; }
+        .meta-btn-quick:hover { background: var(--azul-sula-light); }
+        .meta-btn-flow { color: var(--azul-blip); font-weight: 600; }
+        .meta-btn-action { color: var(--laranja-sula); font-weight: 600; }
+        
+        .map-preview { width: 100%; height: 100px; background: #e9ecef; border-radius: 8px; margin-bottom: 4px; display: flex; align-items: center; justify-content: center; border: 1px solid #dee2e6; position: relative; overflow: hidden; }
+        .map-preview::before { content: ""; position: absolute; width: 100%; height: 100%; background-image: linear-gradient(#ccc 1px, transparent 1px), linear-gradient(90deg, #ccc 1px, transparent 1px); background-size: 20px 20px; opacity: 0.5; }
+
+        .wa-flow-modal { position: absolute; bottom: -100%; left: 0; width: 100%; height: 85%; background: #ffffff; border-radius: 24px 24px 0 0; z-index: 100; transition: bottom 0.3s cubic-bezier(0.25, 1, 0.5, 1); display: flex; flex-direction: column; box-shadow: 0 -10px 20px rgba(0,0,0,0.2); }
+        .wa-flow-modal.open { bottom: 0; }
+        .flow-header { padding: 15px; border-bottom: 1px solid #e9ecef; display: flex; align-items: center; justify-content: space-between; }
+        .flow-header h3 { font-size: 0.95rem; color: #111b21; font-weight: 600; }
+        .flow-close { background: none; border: none; font-size: 1.5rem; color: #54656f; cursor: pointer; }
+        .flow-body { padding: 20px; flex: 1; overflow-y: auto; }
+        .flow-field { margin-bottom: 15px; }
+        .flow-field label { display: block; font-size: 0.8rem; color: #54656f; margin-bottom: 5px; font-weight: 500; }
+        .flow-field input, .flow-field select { width: 100%; padding: 10px; border: 1px solid #d1d7db; border-radius: 8px; font-size: 0.9rem; color: #111b21; background: #f0f2f5; }
+        .flow-footer { padding: 15px; border-top: 1px solid #e9ecef; }
+        .flow-btn { width: 100%; padding: 12px; background: var(--azul-blip); color: white; border: none; border-radius: 24px; font-weight: 600; font-size: 0.9rem; cursor: pointer; }
+
+        .wa-footer { background: #f0f2f5; padding: 10px; display: flex; align-items: center; gap: 10px; z-index: 2; }
+        .wa-input-mock { flex: 1; background: white; padding: 9px 15px; border-radius: 20px; font-size: 0.85rem; color: #667781; }
+
+        .btn-reset { margin-top: 15px; width: 100%; background: transparent; border: 1px solid rgba(255,255,255,0.2); color: #cbd5e1; padding: 10px; border-radius: 8px; cursor: pointer; transition: 0.2s; text-transform: uppercase; font-size: 0.8rem; font-weight: 600; letter-spacing: 0.5px;}
+        .btn-reset:hover { background: rgba(255,255,255,0.05); }
+    </style>
+</head>
+<body>
+
+    <div class="security-strip">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 10.99h7c-.53 4.12-3.28 7.79-7 8.94V12H5V6.3l7-3.11v8.8z"/></svg>
+        Arquitetura Enterprise Blip • Conformidade com a LGPD e normativas da ANS • Criptografia Fim-a-Fim Meta
+    </div>
+
+    <header>
+        <div title="SulAmérica">
+            <img src="LogoSulAmerica.png" alt="SulAmérica" style="height: 48px; display: block; object-fit: contain;">
+        </div>
+
+        <div title="Blip">
+            <img src="Marca-Blip-_blue-black-2.png" alt="Blip" style="height: 48px; display: block; object-fit: contain;">
+        </div>
+    </header>
+
+    <main>
+        <div class="left-column">
+            
+            <div class="control-panel">
+                <h2>Cenários Operacionais</h2>
+                <p>Navegue pelos cenários para visualizar a simulação e os indicadores operacionais atrelados.</p>
+                
+                <div class="journey-grid">
+                    <button class="journey-btn active" onclick="switchJourney('status_pendencia', this)">
+                        <h3>1. Status e Pendência</h3>
+                        <span>Comunicação ativa de laudos faltantes.</span>
+                    </button>
+                    <button class="journey-btn" onclick="switchJourney('agendamento_local', this)">
+                        <h3>2. Agendamento com IA</h3>
+                        <span>NLP clínico e integração de GPS nativo.</span>
+                    </button>
+                    <button class="journey-btn" onclick="switchJourney('reembolso_ocr', this)">
+                        <h3>3. Reembolso Inteligente</h3>
+                        <span>Extração cognitiva de imagem (OCR).</span>
+                    </button>
+                    <button class="journey-btn" onclick="switchJourney('inadimplencia', this)">
+                        <h3>4. Inadimplência e Retenção</h3>
+                        <span>Renegociação e envio de faturamento ágil.</span>
+                    </button>
+                    <button class="journey-btn" onclick="switchJourney('venda_viagem', this)">
+                        <h3>5. Venda Seguro Viagem</h3>
+                        <span>Geração de receita via formulários Meta.</span>
+                    </button>
+                    <button class="journey-btn" onclick="switchJourney('telemedicina', this)">
+                        <h3>6. Triagem e Telemedicina</h3>
+                        <span>Aceleração de entrada na rota digital.</span>
+                    </button>
+                    <button class="journey-btn" onclick="switchJourney('gerador_contrato', this)">
+                        <h3>7. Gerador de Contratos (Corretor)</h3>
+                        <span>Emissão ágil via WhatsApp Flows B2B.</span>
+                    </button>
+                </div>
+            </div>
+
+            <div class="kpi-panel" id="dynamicKpiPanel">
+                <div class="kpi-header" id="kpiTitle">Impacto: Status e Pendência</div>
+                <div class="kpi-content">
+                    <div class="kpi-box">
+                        <h4>Dores Operacionais</h4>
+                        <ul class="kpi-list" id="kpiDores"></ul>
+                    </div>
+                    <div class="kpi-box">
+                        <h4>Indicadores (KPIs)</h4>
+                        <ul class="kpi-list" id="kpiMetricas"></ul>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="phone-container">
+            <div class="phone-screen">
+                <div class="wa-header">
+                    <div class="wa-avatar">S</div>
+                    <div class="wa-info">
+                        <h4>SulAmérica <span class="wa-badge"></span></h4>
+                        <p>Conta comercial oficial</p>
+                    </div>
+                </div>
+                
+                <div class="wa-chat-body" id="chatBody"></div>
+                
+                <div class="wa-footer">
+                    <div class="wa-input-mock">Mensagem</div>
+                    <div style="width: 34px; height: 34px; background: var(--azul-sula); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white;">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3zm5.3-3c0 3-2.54 5.1-5.3 5.1S6.7 14 6.7 11H5c0 3.41 2.72 6.23 6 6.72V21h2v-3.28c3.28-.48 6-3.3 6-6.72h-1.7z"/></svg>
+                    </div>
+                </div>
+
+                <div class="wa-flow-modal" id="flowModal">
+                    <div class="flow-header">
+                        <h3 id="flowHeaderTitle">Formulário</h3>
+                        <button class="flow-close" onclick="closeFlow()">×</button>
+                    </div>
+                    <div class="flow-body">
+                        <div id="flowBodyContent"></div>
+                        <p style="font-size: 0.75rem; color: #8696a0; text-align: center; margin-top: 20px;">Componente Seguro da Meta 🔒</p>
+                    </div>
+                    <div class="flow-footer">
+                        <button class="flow-btn" onclick="submitFlow()">Enviar Informações</button>
+                    </div>
+                </div>
+
+            </div>
+            <button class="btn-reset" onclick="resetChat()">Reiniciar Simulação Atual</button>
+        </div>
+    </main>
+
+    <script>
+        const businessData = {
+            status_pendencia: {
+                title: "Impacto: Status e Pendência",
+                dores: [ "Alta volumetria de <strong>chamadas inbound/outbound</strong> no SAC para acompanhamento de guias.", "<strong>Atraso no SLA de análise</strong> médica devido a pendências documentais não comunicadas de forma síncrona." ],
+                metricas: [ "-30% TMA Operacional", "+15% FCR (Resolução 1º Contato)", "-25% Volume de Chamadas" ]
+            },
+            agendamento_local: {
+                title: "Impacto: Agendamento com IA",
+                dores: [ "Elevado <strong>Tempo Médio de Atendimento (TMA)</strong> no call center para marcação de consultas.", "Alto índice de <strong>absenteísmo (No-Show)</strong> por falta de réguas de engajamento ativo na rede." ],
+                metricas: [ "Agendamento < 1.5 min", "-18% Índice de No-Show", "Aumento de Eficiência" ]
+            },
+            reembolso_ocr: {
+                title: "Impacto: Reembolso Inteligente",
+                dores: [ "Alto <strong>Custo de Backoffice</strong> para digitação e conferência manual de recibos médicos.", "<strong>Inconsistências no pagamento</strong> de sinistros devido a dados bancários incorretos ou desatualizados." ],
+                metricas: [ "-80% Tempo de Análise", "Redução de Custo de Backoffice", "+ CSAT na Jornada" ]
+            },
+            inadimplencia: {
+                title: "Impacto: Inadimplência e Retenção",
+                dores: [ "Elevado índice de cancelamento <strong>(Churn involuntário)</strong> devido à inadimplência técnica.", "<strong>Sobrecarga da central de atendimento</strong> apenas para emissão de segunda via de boletos." ],
+                metricas: [ "+22% Recuperação de Receita", "-40% Atendimentos Financeiros", "Redução de Churn" ]
+            },
+            venda_viagem: {
+                title: "Impacto: Venda Seguro Viagem",
+                dores: [ "<strong>Baixa taxa de conversão</strong> em campanhas de Cross-Sell devido ao atrito de navegação.", "<strong>Fricção na jornada de compra</strong> pelo redirecionamento constante para portais externos." ],
+                metricas: [ "+35% Taxa de Conversão", "Aumento de Receita (Cross-Sell)", "Redução de CAC" ]
+            },
+            telemedicina: {
+                title: "Impacto: Triagem e Telemedicina",
+                dores: [ "<strong>Alta sinistralidade</strong> gerada pelo uso inadequado de Prontos Socorros físicos para casos simples.", "Dificuldade sistêmica na <strong>triagem clínica inicial</strong>, gerando encaminhamentos incorretos." ],
+                metricas: [ "Redução de Sinistralidade", "+ Adoção da Rota Digital", "Otimização do SLA Médico" ]
+            },
+            gerador_contrato: {
+                title: "Impacto: Portal do Corretor (B2B)",
+                dores: [ "Elevado <strong>tempo administrativo</strong> gasto pelos corretores na redação manual de propostas e contratos.", "<strong>Erros de digitação</strong> (CNPJ, Nomes) que geram retrabalho e atrasam o fecho da venda." ],
+                metricas: [ "-75% Tempo de Emissão", "+ Produtividade do Corretor", "Eliminação de Retrabalho" ]
+            }
+        };
+
+        const journeys = {
+            status_pendencia: [
+                { type: 'bot', text: 'Olá! Você acessou <b>Acompanhamento de Autorizações</b>.<br><br>Encontrei uma solicitação: <b>Cirurgia (Protocolo #99281)</b>.<br>Deseja ver o status?', buttons: [ { text: 'Ver Status', action: 'text', next: 1 } ] },
+                { type: 'bot', text: '⚠️ <b>Atenção: Identificamos uma pendência.</b><br><br>A auditoria médica precisa do seu <b>Laudo de Ressonância</b>.<br><br>Para agilizar, envie o documento em PDF ou foto por aqui mesmo:', buttons: [ { text: '📄 Enviar PDF', action: 'upload_pdf', next: 2 }, { text: '📷 Enviar Foto', action: 'upload_img', next: 2 } ] },
+                { type: 'bot', text: 'Validando arquivo de forma segura... 🔒', actionSim: () => { setTimeout(() => { sendBotMessage("✅ <b>Recebido com sucesso!</b><br><br>O arquivo foi anexado. Eu te avisarei ativamente por aqui assim que a cirurgia for aprovada. 💙"); }, 2500); } }
+            ],
+            agendamento_local: [
+                { type: 'bot', text: 'Olá! Como a assistente digital da SulAmérica pode cuidar de você hoje?<br><br>Sinta-se à vontade para me explicar o que está sentindo.', actionSim: () => { setTimeout(() => { sendUserMessage("Tô com uma dor aguda nas costas, travou tudo. Preciso de um ortopedista pra hoje."); setTimeout(() => { sendBotMessage("<b>Compreendi.</b> Vou te ajudar a encontrar um <b>Ortopedista</b> rapidamente. 🔍<br><br>Para eu encontrar os profissionais mais próximos, envie sua localização atual clicando abaixo.", null, [ { text: '📍 Enviar Localização (GPS)', action: 'send_location', next: 1 } ]); }, 1500); }, 2000); } },
+                { type: 'bot', text: 'Obrigada! Buscando especialistas no raio de 5km... 🔄', actionSim: () => { setTimeout(() => { sendBotMessage("Encontrei 3 opções com disponibilidade imediata na sua região:", { header: 'Ortopedistas Próximos', options: [ { text: 'Clínica OrtoSP (1.2 km) - 14:00', next: 2 }, { text: 'Dr. Silva (3.0 km) - 15:30', next: 2 } ] }); }, 1800); } },
+                { type: 'bot', text: '✅ <b>Excelente!</b> Agendamento confirmado.<br><br>Seu token é <b>#SULA8821</b>. Ele já está sincronizado no seu app. Melhoras! 💙' }
+            ],
+            reembolso_ocr: [
+                { type: 'bot', text: 'Você acessou <b>Solicitação de Reembolso</b>.<br><br>Por favor, me envie a foto nítida do recibo.', buttons: [ { text: '📸 Simular Envio de Recibo', action: 'upload_img', next: 1 } ] },
+                { type: 'bot', text: '📄 <b>Recebido!</b> Nossa IA está lendo a imagem...', actionSim: () => { setTimeout(() => { sendBotMessage("Extraímos as informações do documento:<br>• <b>Valor:</b> R$ 350,00<br>• <b>Serviço:</b> Consulta<br>• <b>Médico:</b> Dr. Carlos Silva<br><br>Confirma os dados?", null, [ { text: '✅ Confirmar', action: 'text', next: 2 } ]); }, 2000); } },
+                { type: 'bot', text: 'Ótimo. Para garantir sua segurança, identificamos a sua conta principal de depósitos:<br><br>🏦 <b>Banco Itaú (341)</b><br>Agência: 0000<br>Conta: 12345-6<br><br>Confirma o recebimento nesta conta?', buttons: [ { text: '👍 Confirmar Conta', action: 'text', next: 3 }, { text: '✏️ Alterar Conta', action: 'text', next: 3 } ] },
+                { type: 'bot', text: '🎉 <b>Protocolo #RB202688 gerado!</b><br><br>Após aprovação, o valor será liberado em <b>até 24 horas</b> na conta confirmada. Avisarei você por aqui! 💸' }
+            ],
+            inadimplencia: [
+                { type: 'bot', text: 'Olá! Aqui é o assistente financeiro da SulAmérica. 💙<br><br>Identifiquei que sua fatura de <b>Maio/2026 (R$ 680,00)</b> venceu ontem.<br><br>Como posso ajudar você a regularizar?', buttons: [ { text: 'Copiar Pix (Sem Juros)', action: 'text', next: 1 }, { text: 'Renegociar Dívida', action: 'renegociar', next: 3 } ] },
+                { type: 'bot', text: 'Aqui está a sua chave Pix. Clique no código abaixo para copiar e colar no seu app bancário:' },
+                { type: 'bot', text: '<code>00020126580014br.gov.bcb.pix0136123e4567-e12b-12d1-a456-4266554400005204000053039865802BR5913SulAmerica6008SP***</code><br><br>A compensação acontece na hora! 🤝' },
+                { type: 'bot', text: 'Entendo perfeitamente, imprevistos acontecem. 🤝<br><br>Para você não perder as coberturas, podemos flexibilizar o pagamento. Qual condição fica melhor?', buttons: [ { text: 'Parcelar em 3x s/ Juros', action: 'text', next: 4 }, { text: 'Novo Boleto (Para dia 15)', action: 'text', next: 4 } ] },
+                { type: 'bot', text: '✅ <b>Fechado! Condição aplicada com sucesso.</b><br><br>O novo documento chegará aqui no WhatsApp na data combinada. Agradecemos a parceria! 💙' }
+            ],
+            venda_viagem: [
+                { type: 'bot', text: 'Olá! Vi que você se interessou pelo <b>Seguro Viagem SulAmérica</b>. 🌍<br><br>Para qual região você viaja?', buttons: [ { text: '🇪🇺 Europa (Schengen)', action: 'text', next: 1 }, { text: '🇺🇸 Estados Unidos', action: 'text', next: 1 } ] },
+                { type: 'bot', text: 'Ótima escolha! Para ser rápido e sem trocas de mensagens, criei um formulário seguro.<br><br>Clique no botão abaixo para preencher as datas e passageiros:', buttons: [ { text: '📝 Abrir Formulário', action: 'flow_viagem', next: 2 } ] },
+                { type: 'bot', text: 'Tudo certo! 🎉 Baseado no que você preencheu (15 dias, 2 pessoas), temos estas opções:', listMenu: { header: 'Planos Disponíveis', options: [ { text: 'Europa Básico - R$ 250', next: 3 }, { text: 'Europa VIP - R$ 380', next: 3 } ] } },
+                { type: 'bot', text: 'Perfeito! O <b>Plano VIP</b> garante tranquilidade total. 💼<br><br>Acesse o checkout oficial para concluir via Cartão ou Pix:<br><br>🔗 <u><i>https://sulamerica.com.br/checkout/19283</i></u>' }
+            ],
+            telemedicina: [
+                { type: 'bot', text: 'Bem-vindo ao Pronto Atendimento SulAmérica. 🚑<br><br>Me conte com detalhes o que você está sentindo:', actionSim: () => { setTimeout(() => { sendUserMessage("Estou com febre de 39 graus, tosse seca e muita dor no corpo. O que eu faço?"); setTimeout(() => { sendBotMessage("<b>Entendi. Pela descrição dos sintomas, precisamos de uma avaliação médica.</b> 🩺<br><br>Nossos médicos estão disponíveis agora para uma consulta por vídeo, sem precisar de deslocamento. Deseja iniciar?", null, [ { text: '🎥 Falar com Médico Agora', action: 'text', next: 1 } ]); }, 1500); }, 2000); } },
+                { type: 'bot', text: 'A <b>Dra. Camila Soares</b> está aguardando você na sala virtual. Clique no link para entrar:<br><br>🔗 <u><i>https://telemedicina.sulamerica.com/sala</i></u>' }
+            ],
+            gerador_contrato: [
+                { type: 'bot', text: 'Olá, Corretor! Bem-vindo ao <b>Portal de Emissão B2B</b>. 💙<br><br>Deseja gerar um novo contrato para o seu cliente?', buttons: [ { text: '📄 Novo Contrato', action: 'text', next: 1 } ] },
+                { type: 'bot', text: 'Excelente! Para redigir a minuta rapidamente e sem erros de digitação, criei este formulário.<br><br>Clique abaixo para inserir os dados da empresa e o produto selecionado:', buttons: [ { text: '📝 Preencher Dados', action: 'flow_contrato', next: 2 } ] },
+                { type: 'bot', text: 'Recebido! 🔄 A validar o CNPJ e a redigir o contrato de forma automatizada...', actionSim: () => { setTimeout(() => { sendBotMessage("✅ <b>Contrato gerado com sucesso!</b><br><br>A minuta com a cobertura do produto <i>Saúde PME</i> já foi criada e está pronta para a assinatura digital do cliente.", null, null, () => { setTimeout(() => { sendUserDocument('Contrato_SulAmerica_PME.pdf'); }, 800) }); }, 2000); } }
+            ]
+        };
+
+        let currentJourneyId = 'status_pendencia';
+        let currentStep = 0;
+
+        function updateKPIs(key) {
+            const data = businessData[key];
+            if(!data) return;
+
+            const panel = document.getElementById('dynamicKpiPanel');
+            panel.style.opacity = 0;
+            
+            setTimeout(() => {
+                document.getElementById('kpiTitle').innerHTML = data.title;
+                
+                let doresHtml = '';
+                data.dores.forEach(d => { 
+                    doresHtml += `<li><div class="kpi-item-wrapper"><span class="kpi-bullet">•</span><div class="kpi-text-content"><p>${d}</p></div></div></li>`; 
+                });
+                document.getElementById('kpiDores').innerHTML = doresHtml;
+
+                let metricasHtml = '';
+                data.metricas.forEach(m => { 
+                    metricasHtml += `<li><div class="kpi-item-wrapper" style="width: 100%;"><span class="kpi-highlight">${m}</span></div></li>`; 
+                });
+                document.getElementById('kpiMetricas').innerHTML = metricasHtml;
+                
+                panel.style.opacity = 1;
+            }, 200);
+        }
+
+        function switchJourney(key, btnElement) {
+            currentJourneyId = key;
+            currentStep = 0;
+            document.querySelectorAll('.journey-btn').forEach(btn => btn.classList.remove('active'));
+            if(btnElement) btnElement.classList.add('active');
+            
+            updateKPIs(key);
+            resetChat();
+        }
+
+        function resetChat() {
+            document.getElementById('chatBody').innerHTML = '';
+            closeFlow();
+            currentStep = 0;
+            renderStep();
+        }
+
+        function renderStep() {
+            const journey = journeys[currentJourneyId];
+            if (currentStep >= journey.length) return;
+            const stepData = journey[currentStep];
+            if (stepData.type === 'bot') sendBotMessage(stepData.text, stepData.listMenu, stepData.buttons, stepData.actionSim);
+        }
+
+        function sendBotMessage(htmlText, listMenu = null, buttons = null, callback = null) {
+            const chatBody = document.getElementById('chatBody');
+            const msgDiv = document.createElement('div');
+            msgDiv.className = 'msg msg-bot';
+            
+            let content = `<div>${htmlText}</div>`;
+            
+            if (listMenu) {
+                content += `<div class="meta-list-container"><div class="meta-list-header">${listMenu.header}</div>`;
+                listMenu.options.forEach((opt) => { content += `<div class="meta-menu-option" onclick="handleInteraction('${opt.text}', 'text', ${opt.next})">${opt.text}</div>`; });
+                content += `</div>`;
+            }
+
+            if (buttons && buttons.length > 0) {
+                content += `<div class="meta-buttons-inline">`;
+                buttons.forEach((btn) => {
+                    let btnClass = 'meta-btn-quick';
+                    if (btn.action === 'flow_viagem' || btn.action === 'flow_contrato') btnClass += ' meta-btn-flow';
+                    if (btn.action === 'upload_pdf' || btn.action === 'upload_img') btnClass += ' meta-btn-action';
+                    content += `<button class="${btnClass}" onclick="handleInteraction('${btn.text}', '${btn.action}', ${btn.next})">${btn.text}</button>`;
+                });
+                content += `</div>`;
+            }
+
+            const time = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+            content += `<span class="msg-time">${time}</span>`;
+            msgDiv.innerHTML = content;
+            chatBody.appendChild(msgDiv);
+            chatBody.scrollTop = chatBody.scrollHeight;
+            if (callback) callback();
+        }
+
+        function handleInteraction(text, actionType, nextStep) {
+            if (actionType === 'flow_viagem') { 
+                openFlow('viagem'); return; 
+            } else if (actionType === 'flow_contrato') { 
+                openFlow('contrato'); return; 
+            } else if (actionType === 'send_location') { 
+                sendUserLocation(); 
+            } else if (actionType === 'upload_pdf') { 
+                sendUserDocument('laudo_ressonancia.pdf'); 
+            } else if (actionType === 'upload_img') { 
+                sendUserImage('recibo_medico.jpg'); 
+            } else { 
+                sendUserMessage(text); 
+            }
+
+            currentStep = nextStep;
+            setTimeout(() => {
+                renderStep();
+                if(currentJourneyId === 'inadimplencia' && currentStep === 1) { currentStep = 2; setTimeout(renderStep, 1000); }
+            }, 800);
+        }
+
+        function openFlow(type) {
+            const flowHeader = document.getElementById('flowHeaderTitle');
+            const flowBody = document.getElementById('flowBodyContent');
+
+            if (type === 'viagem') {
+                flowHeader.innerText = 'Cotação Seguro Viagem';
+                flowBody.innerHTML = `
+                    <div class="flow-field"><label>Data de Embarque</label><input type="date" value="2026-06-15"></div>
+                    <div class="flow-field"><label>Data de Retorno</label><input type="date" value="2026-06-30"></div>
+                    <div class="flow-field">
+                        <label>Número de Passageiros</label>
+                        <select><option>1 pessoa</option><option selected>2 pessoas</option><option>Família (3+)</option></select>
+                    </div>`;
+            } else if (type === 'contrato') {
+                flowHeader.innerText = 'Emissão de Contrato';
+                flowBody.innerHTML = `
+                    <div class="flow-field"><label>CNPJ da Empresa</label><input type="text" placeholder="Ex: 00.000.000/0001-00" value="12.345.678/0001-99"></div>
+                    <div class="flow-field"><label>Razão Social</label><input type="text" placeholder="Nome da Empresa" value="Tech Solutions LTDA"></div>
+                    <div class="flow-field"><label>Número de Vidas (Beneficiários)</label><input type="number" placeholder="Ex: 50" value="25"></div>
+                    <div class="flow-field">
+                        <label>Produto Selecionado</label>
+                        <select>
+                            <option selected>Saúde PME (3 a 29 vidas)</option>
+                            <option>Saúde Empresarial (30+ vidas)</option>
+                            <option>Odonto PME</option>
+                            <option>Seguro de Vida Empresarial</option>
+                        </select>
+                    </div>`;
+            }
+            document.getElementById('flowModal').classList.add('open');
+        }
+
+        function closeFlow() { document.getElementById('flowModal').classList.remove('open'); }
+        function submitFlow() { closeFlow(); sendUserMessage("📝 Formulário Seguro Preenchido."); currentStep = 2; setTimeout(renderStep, 1200); }
+
+        function sendUserMessage(text) {
+            const chatBody = document.getElementById('chatBody');
+            const msgDiv = document.createElement('div');
+            msgDiv.className = 'msg msg-user';
+            const time = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+            msgDiv.innerHTML = `<div>${text}</div><span class="msg-time">${time}</span>`;
+            chatBody.appendChild(msgDiv);
+            chatBody.scrollTop = chatBody.scrollHeight;
+        }
+
+        function sendUserLocation() {
+            const chatBody = document.getElementById('chatBody');
+            const msgDiv = document.createElement('div');
+            msgDiv.className = 'msg msg-user';
+            const time = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+            msgDiv.innerHTML = `<div class="map-preview"><svg width="28" height="28" viewBox="0 0 24 24" fill="#E53935" style="z-index: 2;"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg></div><span style="font-size:0.75rem; display:block; margin-top:4px;">Localização Atual (GPS)</span><span class="msg-time">${time}</span>`;
+            chatBody.appendChild(msgDiv); chatBody.scrollTop = chatBody.scrollHeight;
+        }
+
+        function sendUserDocument(fileName) {
+            const chatBody = document.getElementById('chatBody');
+            const msgDiv = document.createElement('div');
+            msgDiv.className = 'msg msg-user';
+            const time = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+            msgDiv.innerHTML = `<div style="background: rgba(0,0,0,0.05); padding: 8px; border-radius: 6px; display: flex; align-items:center; gap:8px;"><span style="font-size:1.5rem;">📄</span><span style="font-weight:600; font-size:0.8rem; color:#111b21;">${fileName}</span></div><span class="msg-time">${time}</span>`;
+            chatBody.appendChild(msgDiv); chatBody.scrollTop = chatBody.scrollHeight;
+        }
+
+        function sendUserImage(fileName) {
+            const chatBody = document.getElementById('chatBody');
+            const msgDiv = document.createElement('div');
+            msgDiv.className = 'msg msg-user';
+            const time = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+            msgDiv.innerHTML = `<div style="width: 100%; height: 100px; background: #cbd5e1; border-radius: 8px; display:flex; align-items:center; justify-content:center; font-size:2rem; margin-bottom:4px;">📷</div><span style="font-size:0.75rem; display:block; text-align:center;">${fileName}</span><span class="msg-time">${time}</span>`;
+            chatBody.appendChild(msgDiv); chatBody.scrollTop = chatBody.scrollHeight;
+        }
+
+        window.onload = function() { updateKPIs(currentJourneyId); renderStep(); };
+    </script>
+</body>
+</html>
